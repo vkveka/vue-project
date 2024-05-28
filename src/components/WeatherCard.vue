@@ -1,6 +1,6 @@
 <template>
     <div v-if="weather" class="card">
-        <div class="card-title">
+        <div class="card-header">
             
         </div>
         <div class="card-body">

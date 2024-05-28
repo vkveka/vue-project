@@ -1,48 +1,70 @@
-<template>
-    <div id="serachCityInput" class="d-flex">
-        <p v-if="errorMessage != ''" class="text-white bg-danger w-50 p-3 mx-auto rounded-pill">{{ errorMessage }}</p>
-        <form @submit.prevent="searchCity">
-            <label for="serachCity">Recherchez une ville :</label>
-            <input type="text" v-model="search" id="searchCity">
-            <br>
-            <span> {{ cityWeather.name }}</span>
-            <br>
-            <button type="submit" class="btn btn-dark">Valider</button>
-        </form>
-    </div>
-</template>
-
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
-import WeatherCard from "./WeatherCard.vue";
+import { useWeatherStore } from "@/WeatherStore";
 
 const search = ref("");
-const key = "a2b19adf706c693795ef7f51b8931eda";
-const cityWeather = ref("");
+const key = "a2b19adf706c693795ef7f51b8931eda&lang=fr&units=metric";
 const errorMessage = ref("");
+const store = useWeatherStore();
+function setFirstUpper(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 const searchCity = async () => {
     // await axios.get('https://api.openweathermap.org/data/2.5/weather?q=' + search.value + '&appid=' + key.value)
     if (search.value.length > 2) {
         await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${search.value}&appid=${key}`)
             .then(res => {
-                cityWeather.value = res.data;
-                console.log(cityWeather.value)
+                store.storeCityWeather(res.data)
+                console.log(store.citiesList)
             })
             .catch(error => {
-                if (error.response.data.message == "city not found") {
+                if (error.response && error.response.data.message == "city not found") {
                     errorMessage.value = "La ville n'existe pas.";
                 } else {
                     errorMessage.value = error.message;
                 }
             });
     } else {
-        errorMessage.value = "Nom de ville trop court. Merci de saisir au moins 3 caractères.";
+        errorMessage.value = "Merci de saisir au moins 3 caractères.";
     }
     setTimeout(() => errorMessage.value = "", 5000);
 }
 
 </script>
+
+
+<template>
+    <div id="searchCityInput" class="mx-auto d-flex flex-column justify-center align-items-center">
+        <form @submit.prevent="searchCity" class="d-flex align-items-center">
+            <label class="form-label" for="serachCity">Recherchez une ville :</label>
+            <input type="text" class="form-control" v-model="search" id="searchCity">
+            <button type="submit" class="btn btn-dark ms-4">Valider</button>
+        </form>
+        <p v-if="errorMessage != ''" class="mt-2 text-secondary text-center  rounded-pill">
+            <img src="../assets/images/error.png" alt="img error" width="15px">
+            {{ errorMessage }}
+        </p>
+    </div>
+    <div class="d-flex justify-center flex-wrap">
+        <div v-for="city in store.citiesList" :key="city.name" class="card text-center mx-auto">
+            <div class="card-header position-relative">
+                <button @click="store.removeCity(city.id)" type="button" class="btn-close position-absolute"
+                    style="right: 10px;"></button>
+                <span class="mx-auto my-auto">{{ city.name }}</span>
+            </div>
+            <div class="card-body d-flex flex-column align-items-center">
+                <span unit="celsius"> {{ city.main.temp }} °C</span>
+                <img :src="`http://openweathermap.org/img/wn/${city.weather[0].icon}.png`" alt="icon weather"
+                    width="70px">
+            </div>
+            <div class="card-footer">
+                <span> {{ setFirstUpper(city.weather[0].description) }}</span>
+            </div>
+        </div>
+    </div>
+</template>
+
 
 <style lang="scss" scoped></style>

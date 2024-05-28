@@ -7,7 +7,6 @@ import WeatherCard from './components/WeatherCard.vue';
 
 <template>
 	<HeaderApp />
-	<SearchForm />
 	<WeatherCard />
 	<FooterApp />
 </template>
