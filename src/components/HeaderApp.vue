@@ -5,21 +5,13 @@
     </nav>
     <header>
         <!-- <img src="../assets/images/header2.jpg" alt="" width="100%"> -->
-        <SearchForm />
 
     </header>
+    <SearchForm />
 </template>
 
 <script setup>
 import SearchForm from './SearchForm.vue';
 </script>
 
-<style scoped>
-header {
-    background: url(../assets/images/header2.jpg);
-    background-attachment: fixed;
-    height: 70vh;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-</style>
+<style scoped></style>

@@ -3,6 +3,11 @@
 body {
     margin: 0;
     font-family: 'Courier New', Courier, monospace;
+    background: url(../assets/images/header2.jpg);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
 }
 
 #app {
